@@ -21,17 +21,18 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
-}
-{
-  "compilerOptions": {
+    },
+    // Add these new lines to the existing configuration
     "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": [
+    "next-env.d.ts", 
+    "**/*.ts", 
+    "**/*.tsx", 
+    ".next/types/**/*.ts",
+    // Add these new include paths
     "src",
     "types"
-  ]
+  ],
+  "exclude": ["node_modules"]
 }
