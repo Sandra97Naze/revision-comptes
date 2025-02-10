@@ -1,10 +1,15 @@
 import jsPDF from 'jspdf';
+// Importer correctement l'extension autoTable
 import 'jspdf-autotable';
-import { BalanceData } from './ExcelService';
+// Étendre l'interface jsPDF pour inclure autoTable
+interface jsPDFWithAutoTable extends jsPDF {
+  autoTable: (options: any) => jsPDF;
+}
 
 export class ReportGenerator {
   static async generateReport(cycle: string, comptesN: BalanceData[], comptesN1: BalanceData[], commentaires: Record<string, string>) {
-    const doc = new jsPDF();
+    // Créer le document avec le type étendu
+    const doc = new jsPDF() as jsPDFWithAutoTable;
     
     doc.setFontSize(16);
     doc.text(`Rapport de Révision - ${cycle}`, 20, 20);
@@ -25,6 +30,7 @@ export class ReportGenerator {
       ];
     });
 
+    // Utiliser autoTable avec le type correct
     doc.autoTable({
       startY: 40,
       head: [['Compte', 'Intitulé', 'Solde N', 'Solde N-1', 'Variation', 'Commentaires']],
