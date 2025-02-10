@@ -1,14 +1,14 @@
 "use client"
 
 import React, { useState } from 'react';
-import { ExcelService } from '../services/ExcelService';
+import { ExcelService, BalanceData } from '../services/ExcelService';
 import { CYCLES } from '../config/cycles';
 import { CycleRevision } from './CycleRevision';
 
 export function RevisionModule() {
-  const [comptes, setComptes] = useState([]);
-  const [selectedCycle, setSelectedCycle] = useState(null);
-  const [cycleStatuts, setCycleStatuts] = useState({});
+  const [comptes, setComptes] = useState<BalanceData[]>([]);
+  const [selectedCycle, setSelectedCycle] = useState<string | null>(null);
+  const [cycleStatuts, setCycleStatuts] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +32,7 @@ export function RevisionModule() {
     }));
   };
 
-  const getCycleStatus = (cycleId: string) => {
+  const getCycleStatus = (cycleId: string): string => {
     switch (cycleStatuts[cycleId]) {
       case 'termine':
         return '✅ Terminé';
@@ -43,12 +43,12 @@ export function RevisionModule() {
     }
   };
 
-  const getCycleTotal = (cycleId: string) => {
+  const getCycleTotal = (cycleId: string): number => {
     const cycle = CYCLES[cycleId];
     const cycleComptes = comptes.filter(compte =>
-      cycle.comptes.some(prefix => compte.numero.startsWith(prefix))
+      cycle.comptes.some(prefix => compte.compte.startsWith(prefix))
     );
-    return cycleComptes.reduce((sum, compte) => sum + compte.soldeN, 0);
+    return cycleComptes.reduce((sum, compte) => sum + compte.solde_n, 0);
   };
 
   return (
@@ -133,28 +133,6 @@ export function RevisionModule() {
             </div>
           )}
         </>
-      )}
-
-      {/* Barre de progression */}
-      {comptes.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-semibold">Progression de la révision</span>
-              <span>
-                {Object.values(cycleStatuts).filter(s => s === 'termine').length} / {Object.keys(CYCLES).length} cycles terminés
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div
-                className="bg-blue-600 h-2.5 rounded-full transition-all"
-                style={{
-                  width: `${(Object.values(cycleStatuts).filter(s => s === 'termine').length / Object.keys(CYCLES).length) * 100}%`
-                }}
-              ></div>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
