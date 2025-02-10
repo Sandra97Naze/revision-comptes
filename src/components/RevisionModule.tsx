@@ -98,3 +98,76 @@ export function RevisionModule() {
     </div>
   )
 }
+use client"
+
+import React, { useState } from 'react';
+import { ExcelService } from '../services/ExcelService';
+import { CYCLES } from '../config/cycles';
+import { CycleRevision } from './CycleRevision';
+
+export function RevisionModule() {
+  const [comptes, setComptes] = useState([]);
+  const [selectedCycle, setSelectedCycle] = useState(null);
+  const [cycleStatuts, setCycleStatuts] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setIsLoading(true);
+      try {
+        const data = await ExcelService.importBalance(e.target.files[0]);
+        setComptes(data);
+      } catch (error) {
+        console.error('Erreur lors de l\'import:', error);
+        alert('Erreur lors de l\'import du fichier');
+      }
+      setIsLoading(false);
+    }
+  };
+
+  const handleCycleValidation = (cycleId: string, status: string) => {
+    setCycleStatuts(prev => ({
+      ...prev,
+      [cycleId]: status
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* En-tête avec import */}
+      <div className="bg-white shadow rounded-lg p-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Révision des Comptes</h1>
+          <div>
+            <input
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleFileUpload}
+              className="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100"
+            />
+          </div>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p>Chargement en cours...</p>
+        </div>
+      ) : (
+        <>
+          {/* Navigation des cycles */}
+          <div className="grid grid-cols-4 gap-4">
+            {Object.entries(CYCLES).map(([id, cycle]) => (
+              <button
+                key={id}
+                onClick={() => setSelectedCycle(id)}
+                className={`p-4 rounded-lg shadow text-left ${
+                  selectedCycle === id ? 'bg-blue-50 border-2 border-blue-500' : 'bg-white'
+                }`}
+              >
+                <h3 className="font-semibold">{cycle
