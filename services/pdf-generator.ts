@@ -13,9 +13,9 @@ export function genererRapportPDF(donnees: any[]) {
       body: donnees.map(compte => [
         compte.compte, 
         compte.intitulé, 
-        compte.soldeN.toString(), 
-        compte.soldeN1.toString(), 
-        compte.variation.toString()
+        compte.soldeN?.toString() || 'N/A', 
+        compte.soldeN1?.toString() || 'N/A', 
+        compte.variation?.toString() || 'N/A'
       ])
     });
 
@@ -23,7 +23,6 @@ export function genererRapportPDF(donnees: any[]) {
     doc.save("rapport-comptes.pdf");
   } else {
     console.error("Bibliothèques PDF non chargées");
-    // Gestion de secours
     alert("Impossible de générer le PDF. Veuillez réessayer.");
   }
 }
