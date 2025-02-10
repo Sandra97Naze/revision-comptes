@@ -1,12 +1,11 @@
 "use client"
 
 import React, { useState } from 'react';
-import { Dashboard } from '@/components/Dashboard';
-import { DocumentManager } from '@/components/DocumentManager';
-import { ReportGenerator } from '@/services/ReportGenerator';
-import { ExcelService, type BalanceData } from '@/services/ExcelService';
-import { CYCLES } from '@/config/cycles';
-import { CycleAnalysis } from '@/components/CycleAnalysis';
+import { Dashboard } from '../components/Dashboard';
+import { DocumentManager } from '../components/DocumentManager';
+import { ReportGenerator } from '../services/ReportGenerator';
+import { ExcelService } from '../services/ExcelService';
+import type { BalanceData } from '../services/ExcelService';
 
 export function RevisionModule() {
   const [comptes, setComptes] = useState<BalanceData[]>([]);
