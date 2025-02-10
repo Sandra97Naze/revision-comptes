@@ -10,13 +10,10 @@ interface Document {
 
 export function DocumentManager({ cycle }: { cycle: string }) {
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [newDoc, setNewDoc] = useState<File | null>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setNewDoc(file);
-      
       const newDocument: Document = {
         id: Date.now().toString(),
         nom: file.name,
@@ -24,7 +21,6 @@ export function DocumentManager({ cycle }: { cycle: string }) {
         date: new Date().toISOString(),
         compte: ''
       };
-
       setDocuments([...documents, newDocument]);
     }
   };
@@ -37,12 +33,7 @@ export function DocumentManager({ cycle }: { cycle: string }) {
         <input
           type="file"
           onChange={handleFileUpload}
-          className="block w-full text-sm text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-full file:border-0
-            file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100"
+          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0"
         />
       </div>
 
