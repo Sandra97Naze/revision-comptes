@@ -1,64 +1,33 @@
 {
   "compilerOptions": {
-    // Configuration du langage cible
-    "target": "es5",  // Compatibilité avec des versions plus anciennes de JavaScript
-
-    // Bibliothèques de types à inclure
-    "lib": [
-      "dom",            // Types pour les APIs du navigateur
-      "dom.iterable",   // Itérables spécifiques au DOM
-      "esnext"          // Dernières fonctionnalités ECMAScript
-    ],
-
-    // Options de compilation
-    "allowJs": true,                        // Autoriser les fichiers JavaScript
-    "skipLibCheck": true,                   // Ignorer la vérification des fichiers de déclaration
-    "strict": true,                         // Activer tous les contrôles de type stricts
-    "forceConsistentCasingInFileNames": true, // Noms de fichiers avec la casse cohérente
-    "noEmit": true,                         // Ne pas générer de fichiers de sortie
-    "esModuleInterop": true,                // Compatibilité entre modules CommonJS et ES
-
-    // Configuration des modules
-    "module": "esnext",                     // Système de modules moderne
-    "moduleResolution": "node",             // Résolution de modules comme Node.js
-    "resolveJsonModule": true,              // Importer des fichiers JSON
-    "isolatedModules": true,                // Chaque fichier peut être compilé indépendamment
-
-    // Configuration spécifique à React/Next.js
-    "jsx": "preserve",                      // Conserver la syntaxe JSX
-    "incremental": true,                    // Build incrémental pour plus de performance
-
-    // Plugins Next.js
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
-
-    // Chemins d'importation absolus
     "paths": {
-      "@/*": ["./src/*"]  // Raccourci pour importer depuis le dossier src
-    },
-
-    // Emplacements des définitions de types
-    "typeRoots": [
-      "./node_modules/@types",  // Types standards de npm
-      "./types"                 // Types personnalisés du projet
-    ]
+      "@/*": ["./src/*"]
+    }
   },
-
-  // Fichiers à inclure dans la compilation
   "include": [
-    "next-env.d.ts",           // Types d'environnement Next.js
-    "**/*.ts",                 // Tous les fichiers TypeScript
-    "**/*.tsx",                // Tous les fichiers TypeScript React
-    ".next/types/**/*.ts",     // Types générés par Next.js
-    "src",                     # Dossier source
-    "types"                    # Dossier de types personnalisés
+    "next-env.d.ts", 
+    "**/*.ts", 
+    "**/*.tsx", 
+    ".next/types/**/*.ts"
   ],
-
-  // Fichiers à exclure de la compilation
-  "exclude": [
-    "node_modules"  // Ne pas compiler les dépendances
-  ]
+  "exclude": ["node_modules"]
 }
