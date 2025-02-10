@@ -43,14 +43,16 @@ export function RevisionModule() {
     }
   };
 
-  const getCycleTotal = (cycleId: string): number => {
-    const cycle = CYCLES[cycleId];
-    const cycleComptes = comptes.filter(compte =>
-      cycle.comptes.some(prefix => compte.compte.startsWith(prefix))
-    );
-    return cycleComptes.reduce((sum, compte) => sum + compte.solde_n, 0);
-  };
-
+  const getCycleTotal = (cycleId: keyof typeof CYCLES): number => {
+  const cycle = CYCLES[cycleId];
+  if (!cycle) return 0;
+  
+  const cycleComptes = comptes.filter(compte =>
+    cycle.comptes.some(prefixe => compte.compte.startsWith(prefixe))
+  );
+  
+  return cycleComptes.reduce((sum, compte) => sum + compte.solde_n, 0);
+};
   return (
     <div className="space-y-6 p-4">
       {/* En-tête avec import */}
