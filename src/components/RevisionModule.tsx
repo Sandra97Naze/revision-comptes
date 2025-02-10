@@ -153,4 +153,38 @@ const [comptesN1, setComptesN1] = useState<BalanceData[]>([]);
       }
       setIsLoading(false);
     }
+    import { Dashboard } from './Dashboard';
+import { DocumentManager } from './DocumentManager';
+import { ReportGenerator } from '../services/ReportGenerator';
+
+// Dans le rendu, ajoutez :
+{comptes.length > 0 && (
+  <>
+    <Dashboard comptesN={comptes} comptesN1={comptesN1} />
+    {selectedCycle && (
+      <div className="space-y-6">
+        <CycleAnalysis 
+          cycle={selectedCycle} 
+          comptesN={comptes} 
+          comptesN1={comptesN1} 
+        />
+        <DocumentManager cycle={selectedCycle} />
+        <button
+          onClick={async () => {
+            const doc = await ReportGenerator.generateReport(
+              selectedCycle,
+              comptes,
+              comptesN1,
+              {} // Ajoutez vos commentaires ici
+            );
+            doc.save(`rapport-${selectedCycle}.pdf`);
+          }}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Générer le rapport
+        </button>
+      </div>
+    )}
+  </>
+)}
   };
