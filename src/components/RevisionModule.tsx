@@ -1,105 +1,5 @@
 "use client"
 
-import React, { useState } from 'react'
-
-interface Account {
-  numero: string
-  intitule: string
-  soldeN: number
-  soldeN1: number
-  variation: number
-  statut: string
-}
-
-export function RevisionModule() {
-  const [accounts, setAccounts] = useState<Account[]>([
-    {
-      numero: "101",
-      intitule: "Capital social",
-      soldeN: 100000,
-      soldeN1: 100000,
-      variation: 0,
-      statut: "À réviser"
-    }
-  ])
-
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null)
-
-  return (
-    <div className="space-y-4">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Révision des Comptes
-          </h1>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto py-6 px-4">
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  N° Compte
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Intitulé
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Solde N
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Variation
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Statut
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {accounts.map((account) => (
-                <tr 
-                  key={account.numero}
-                  onClick={() => setSelectedAccount(account)}
-                  className="hover:bg-gray-50 cursor-pointer"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">{account.numero}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{account.intitule}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {account.soldeN.toLocaleString()} €
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {account.variation.toFixed(2)}%
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{account.statut}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
-
-      {selectedAccount && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
-            <h2 className="text-xl font-bold mb-4">
-              Détails du compte {selectedAccount.numero}
-            </h2>
-            <button 
-              onClick={() => setSelectedAccount(null)}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Fermer
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-use client"
-
 import React, { useState } from 'react';
 import { ExcelService } from '../services/ExcelService';
 import { CYCLES } from '../config/cycles';
@@ -132,13 +32,32 @@ export function RevisionModule() {
     }));
   };
 
+  const getCycleStatus = (cycleId: string) => {
+    switch (cycleStatuts[cycleId]) {
+      case 'termine':
+        return '✅ Terminé';
+      case 'en_cours':
+        return '🔄 En cours';
+      default:
+        return '⚪ À faire';
+    }
+  };
+
+  const getCycleTotal = (cycleId: string) => {
+    const cycle = CYCLES[cycleId];
+    const cycleComptes = comptes.filter(compte =>
+      cycle.comptes.some(prefix => compte.numero.startsWith(prefix))
+    );
+    return cycleComptes.reduce((sum, compte) => sum + compte.soldeN, 0);
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       {/* En-tête avec import */}
       <div className="bg-white shadow rounded-lg p-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Révision des Comptes</h1>
-          <div>
+          <div className="flex items-center space-x-4">
             <input
               type="file"
               accept=".xlsx,.xls"
@@ -150,6 +69,14 @@ export function RevisionModule() {
                 file:bg-blue-50 file:text-blue-700
                 hover:file:bg-blue-100"
             />
+            {comptes.length > 0 && (
+              <button
+                onClick={() => setComptes([])}
+                className="px-4 py-2 bg-red-50 text-red-700 rounded-full hover:bg-red-100"
+              >
+                Réinitialiser
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -160,14 +87,75 @@ export function RevisionModule() {
         </div>
       ) : (
         <>
-          {/* Navigation des cycles */}
-          <div className="grid grid-cols-4 gap-4">
-            {Object.entries(CYCLES).map(([id, cycle]) => (
-              <button
-                key={id}
-                onClick={() => setSelectedCycle(id)}
-                className={`p-4 rounded-lg shadow text-left ${
-                  selectedCycle === id ? 'bg-blue-50 border-2 border-blue-500' : 'bg-white'
-                }`}
-              >
-                <h3 className="font-semibold">{cycle
+          {comptes.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6">
+              {/* Navigation des cycles */}
+              <div className="grid grid-cols-4 gap-4">
+                {Object.entries(CYCLES).map(([id, cycle]) => (
+                  <button
+                    key={id}
+                    onClick={() => setSelectedCycle(id)}
+                    className={`p-4 rounded-lg shadow text-left transition-all ${
+                      selectedCycle === id ? 'bg-blue-50 border-2 border-blue-500' : 'bg-white hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <h3 className="font-semibold">{cycle.nom}</h3>
+                      <span className="text-sm">{getCycleStatus(id)}</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      {cycle.comptes.length} comptes
+                    </p>
+                    <p className="text-lg font-semibold mt-2">
+                      {getCycleTotal(id).toLocaleString()} €
+                    </p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Contenu du cycle sélectionné */}
+              {selectedCycle && (
+                <CycleRevision
+                  cycle={selectedCycle}
+                  comptes={comptes}
+                  onValidate={handleCycleValidation}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-white rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-600">
+                Importez votre balance pour commencer la révision
+              </h2>
+              <p className="mt-2 text-gray-500">
+                Format accepté : Excel (.xlsx, .xls)
+              </p>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Barre de progression */}
+      {comptes.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex justify-between items-center mb-2">
+              <span className="font-semibold">Progression de la révision</span>
+              <span>
+                {Object.values(cycleStatuts).filter(s => s === 'termine').length} / {Object.keys(CYCLES).length} cycles terminés
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                className="bg-blue-600 h-2.5 rounded-full transition-all"
+                style={{
+                  width: `${(Object.values(cycleStatuts).filter(s => s === 'termine').length / Object.keys(CYCLES).length) * 100}%`
+                }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
