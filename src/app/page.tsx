@@ -1,7 +1,6 @@
 // Importations existantes
 import { utilisateur } from '@/utilisateur';
 import ModuleDeRévision from '../components/Module de révision';
-import { PDFLoader } from '../components/PDFLoader'; // NOUVEAU : Importez le chargeur PDF
 
 export default function Maison() {
   const [estAuthentifié] = utilisateur(FAUX);
@@ -21,7 +20,6 @@ export default function Maison() {
 
   return (
     <main className="écran min-h-p-4">
-      <PDFLoader /> {/* NOUVEAU : Ajoutez le chargeur PDF ici */}
       <ModuleDeRévision />
     </main>
   );
