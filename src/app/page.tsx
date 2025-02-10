@@ -1,27 +1,28 @@
-"use client"
+// Importations existantes
+import { utilisateur } from '@/utilisateur';
+import ModuleDeRévision from '../components/Module de révision';
+import { PDFLoader } from '../components/PDFLoader'; // NOUVEAU : Importez le chargeur PDF
 
-import { useState } from 'react'
-import { RevisionModule } from '../components/RevisionModule'
+export default function Maison() {
+  const [estAuthentifié] = utilisateur(FAUX);
 
-export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-
-  if (!isAuthenticated) {
+  if (!estAuthentifié) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <button
-          onClick={() => setIsAuthenticated(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+        <button 
+          onClick={() => définirAuthentifié(vrai)} 
+          className="px-4 py-2 bg-bleu-500 text-blanc rounded"
         >
           Se connecter
         </button>
       </div>
-    )
+    );
   }
 
   return (
-    <main className="min-h-screen p-4">
-      <RevisionModule />
+    <main className="écran min-h-p-4">
+      <PDFLoader /> {/* NOUVEAU : Ajoutez le chargeur PDF ici */}
+      <ModuleDeRévision />
     </main>
-  )
+  );
 }
