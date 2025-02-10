@@ -139,3 +139,18 @@ export function RevisionModule() {
     </div>
   );
 }
+const [comptesN1, setComptesN1] = useState<BalanceData[]>([]);
+
+  const handleN1Import = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setIsLoading(true);
+      try {
+        const data = await ExcelService.importBalance(e.target.files[0]);
+        setComptesN1(data);
+      } catch (error) {
+        console.error('Erreur lors de l\'import N-1:', error);
+        alert('Erreur lors de l\'import du fichier N-1');
+      }
+      setIsLoading(false);
+    }
+  };
