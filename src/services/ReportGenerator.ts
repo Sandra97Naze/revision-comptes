@@ -2,9 +2,8 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 export class GénérateurDeRapports {
-  static async générerRapport(données: any[], données1: any[], commentaires: string) {
+  static générerRapport(données: any[]) {
     const doc = new jsPDF();
-
     // Set document properties
     doc.setFontSize(16);
     doc.text('Rapport de Révision des Comptes', 20, 20);
@@ -26,4 +25,3 @@ export class GénérateurDeRapports {
     return doc;
   }
 }
-
